@@ -15,6 +15,10 @@ export const routes = [
     method: 'POST',
     path: buildRoutePath('/tasks'),
     handler: (request, response) => {
+
+      console.log(request.body)
+
+
       return response.end(JSON.stringify());
     }
   },
