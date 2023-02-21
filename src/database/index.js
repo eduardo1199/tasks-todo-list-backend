@@ -30,7 +30,17 @@ export class Database {
     return data
   }
 
-  select(table, search) {
+  selectUnique(table, id) {
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id)
+
+    if(rowIndex < 0) {
+      return false
+    }
+
+    return true
+  }
+
+  selectAll(table, search) {
     let data = this.#database[table] ?? [];
 
     if(search) {
@@ -61,5 +71,29 @@ export class Database {
 
       this.#persist()
     }
+  }
+
+  delete(table, id) {
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id)
+
+    if(rowIndex > -1) {
+      this.#database[table].splice(rowIndex, 1);
+
+      this.#persist()
+    }
+  }
+
+  toggleMarkTask(table, id) {
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id)
+
+    const updateTaskWithMark = {
+      ...this.#database[table][rowIndex],
+      completed_at: this.#database[table][rowIndex].completed_at ? null : new Date(),
+      updated_at: new Date()
+    }
+
+    this.#database[table].splice(rowIndex, 1, updateTaskWithMark);
+
+    this.#persist()
   }
 }

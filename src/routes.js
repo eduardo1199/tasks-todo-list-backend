@@ -11,7 +11,7 @@ export const routes = [
     handler: (request, response) => {
       const queryParams = request.query
 
-      const tasksFiltered = database.select('task', queryParams)
+      const tasksFiltered = database.selectAll('task', queryParams)
 
       return response.writeHead(200).end(JSON.stringify(tasksFiltered))
     }
@@ -57,9 +57,15 @@ export const routes = [
       const { id } = request.params
       const data = request.body;
 
+      const hasTaskById = database.selectUnique('task', id)
+
+      if(!hasTaskById) {
+        return response.writeHead(400).end(JSON.stringify({ message: 'task not found' }))
+      }
+
       database.update('task', id, data)
 
-      const tasks = database.select('task');
+      const tasks = database.selectAll('task');
 
       return response.writeHead(201).end(JSON.stringify(tasks))
     }
@@ -68,14 +74,34 @@ export const routes = [
     method: 'DELETE',
     path: buildRoutePath('/tasks/:id'),
     handler: (request, response) => {
-      return response.end(JSON.stringify());
+      const { id } = request.params;
+
+      const hasTaskById = database.selectUnique('task', id)
+
+      if(!hasTaskById) {
+        return response.writeHead(400).end(JSON.stringify({ message: 'task not found' }))
+      }
+
+      database.delete('task', id)
+
+      return response.writeHead(201).end(JSON.stringify({ message: 'Task deletada com sucesso!' }))
     }
   },
   {
     method: 'PATCH',
     path: buildRoutePath('/tasks/:id/complete'),
     handler: (request, response) => {
-      return response.end(JSON.stringify());
+      const { id } = request.params;
+
+      const hasTaskById = database.selectUnique('task', id)
+
+      if(!hasTaskById) {
+        return response.writeHead(400).end(JSON.stringify({ message: 'task not found' }))
+      }
+
+      database.toggleMarkTask('task', id)
+
+      return response.writeHead(200).end(JSON.stringify({ message: 'task marked successfully!' }))
     }
   },
 ]
