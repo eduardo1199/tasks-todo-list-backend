@@ -5,9 +5,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch src/server.js"
+    "dev": "node --watch src/server.js",
+    "pipe": "node --watch src/streams/import-csv.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "csv-generate": "^4.2.2",
+    "csv-parse": "^5.3.5"
+  }
 }
