@@ -54,7 +54,14 @@ export const routes = [
     method: 'PUT',
     path: buildRoutePath('/tasks/:id'),
     handler: (request, response) => {
-      return response.end(JSON.stringify());
+      const { id } = request.params
+      const data = request.body;
+
+      database.update('task', id, data)
+
+      const tasks = database.select('task');
+
+      return response.writeHead(201).end(JSON.stringify(tasks))
     }
   },
   {

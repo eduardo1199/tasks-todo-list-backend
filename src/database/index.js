@@ -35,10 +35,8 @@ export class Database {
 
     if(search) {
       data = data.filter((row) => {
-        console.log(row)
-
         return Object.entries(search).some(([key, value]) => {
-          return row[key].includes(value);
+          return row[key].toLowerCase().includes(value?.toLowerCase() ?? '');
         })
       })
     }
@@ -46,11 +44,21 @@ export class Database {
     return data
   }
 
-  delete(table, id) {
+  update(table, id, data) {
+    const { title, description } = data;
+
     const rowIndex = this.#database[table].findIndex((row) => row.id === id)
 
     if(rowIndex > -1) {
-      this.#database[table].splice(rowIndex, 1);
+      const updateNewTask = {
+        ...this.#database[table][rowIndex],
+        title: title ? title : this.#database[table][rowIndex].title,
+        description: description ? description : this.#database[table][rowIndex].description,
+        updated_at: new Date()
+      }
+      
+      this.#database[table].splice(rowIndex, 1, updateNewTask);
+
       this.#persist()
     }
   }
